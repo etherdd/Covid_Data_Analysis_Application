@@ -5,9 +5,9 @@ public class PopulationData {
     private String zipCode;
     private int population;
 
-    public PopulationData(String zipCode, int population) {
-        this.zipCode = zipCode;
+    public PopulationData(int population, String zipCode) {
         this.population = population;
+        this.zipCode = zipCode;
     }
 
     public String getZipCode() {

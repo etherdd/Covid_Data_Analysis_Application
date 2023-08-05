@@ -1,6 +1,6 @@
 package edu.upenn.cit594.studenttests.util;
 
-public class COVIDData {
+public class CovidData {
 
     public String getZipCode() {
         return zipCode;
@@ -39,10 +39,11 @@ public class COVIDData {
     private long partialVaccinated;
     private long fullyVaccinated;
     private String timestamp;
-    public COVIDData(String zipCode, long partialVaccinated, long fullyVaccinated, String timestamp) {
-        this.zipCode = zipCode;
-        this.partialVaccinated = partialVaccinated;
+    public CovidData(String zipCodeStr, String timestampStr, int partiallyVaccinated, int fullyVaccinated) {
+//    public COVIDData(String zipCode, long partialVaccinated, long fullyVaccinated, String timestamp) {
+        this.zipCode = zipCodeStr;
+        this.partialVaccinated = partiallyVaccinated;
         this.fullyVaccinated = fullyVaccinated;
-        this.timestamp = timestamp;
+        this.timestamp = timestampStr;
     }
 }

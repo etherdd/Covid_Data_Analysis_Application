@@ -1,4 +1,4 @@
-package edu.upenn.cit594.studenttests.datamanagement;
+package edu.upenn.cit594.datamanagement;
 
 /**
  * The class {@code CSVFormatException} is a {@code Exception} to indicate a
