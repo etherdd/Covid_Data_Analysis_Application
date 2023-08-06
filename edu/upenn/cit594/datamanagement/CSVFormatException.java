@@ -1,5 +1,4 @@
 package edu.upenn.cit594.datamanagement;
-
 /**
  * The class {@code CSVFormatException} is a {@code Exception} to indicate a
  * syntax error occurred while processing a CSV file.
@@ -9,7 +8,7 @@ package edu.upenn.cit594.datamanagement;
  *
  * @author  Joshua Hanson
  * @author  Rafi Rubin
- * @see     Exception
+ * @see     java.lang.Exception
  */
 public class CSVFormatException extends Exception {
     private static final long serialVersionUID = 3160622090049L;

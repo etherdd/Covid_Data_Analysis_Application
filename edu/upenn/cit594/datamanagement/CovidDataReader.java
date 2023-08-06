@@ -1,6 +1,8 @@
 package edu.upenn.cit594.datamanagement;
 
+import edu.upenn.cit594.logging.Logger;
 import edu.upenn.cit594.util.CovidData;
+import edu.upenn.cit594.util.FileData;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,21 +19,32 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class CovidDataReader {
+    private String fileName;
+    private FileData file;
 
-    // reading COVID data from either a CSV or a JSON file
+    public CovidDataReader(FileData fileInput) {
+        this.fileName = fileInput.getCovidFile();
+        this.file = fileInput;
+    }
 
-    // You should ignore any records where the ZIP Code is not 5 digits or the timestamp is not
-    // in the specified format. For any other fields, an empty value should be interpreted as being 0.
-
-    public List<CovidData> readCovidData(String covidFile) throws IOException, ParseException, CSVFormatException, IllegalAccessException {
+    public List<CovidData> readCovidData() throws IOException, ParseException, CSVFormatException, IllegalAccessException {
+    	
         List<CovidData> covidDataList = new ArrayList<>();
+        
+        String logFileName = file.getLogFile();
+        Logger logger = Logger.getInstance();
+        if (logFileName != null) {
+            logger.setOutputDestination(logFileName);
+        }
+        
+        logger.logEvent(fileName);
 
-        if (covidFile.endsWith(".json")) {
+        if (fileName.endsWith(".json")) {
             // Read JSON data
-            covidDataList = readCovidDataFromJSON(covidFile);
-        } else if (covidFile.endsWith(".csv")) {
+            covidDataList = readCovidDataFromJSON();
+        } else if (fileName.endsWith(".csv")) {
             // Read CSV data
-            covidDataList = readCovidDataFromCSV(covidFile);
+            covidDataList = readCovidDataFromCSV();
         } else {
             throw new IllegalAccessException("Unsupported file format.");
         }
@@ -39,9 +52,9 @@ public class CovidDataReader {
         return covidDataList;
     }
 
-    private List<CovidData> readCovidDataFromJSON(String covidFile) throws IOException, ParseException {
-        List<CovidData> covidDataList = new ArrayList();
-        BufferedReader reader = new BufferedReader(new FileReader(covidFile));
+    private List<CovidData> readCovidDataFromJSON() throws IOException, ParseException {
+    	List<CovidData> covidDataList = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
         JSONParser parser = new JSONParser();
         JSONArray a = (JSONArray) parser.parse(reader);
 
@@ -52,12 +65,7 @@ public class CovidDataReader {
                 // Ignore records with invalid Zipcode
                 continue;
             }
-//            Long neg = covidJSON.get("NEG") == null ? 0L : (Long) covidJSON.get("NEG");
-//            int pos = covidJSON.get("POS") == null ? (int) 0L : (Integer) covidJSON.get("POS");
-//            int deaths = covidJSON.get("deaths") == null ? (int) 0L : (Integer) covidJSON.get("deaths");
-//            int hospitalized = covidJSON.get("hospitalized") == null ? (int) 0L : (Integer) covidJSON.get("hospitalized");
 
-            // theLong != null ? theLong.intValue() : null;
             long partiallyVaccinatedLong = covidJSON.get("partially_vaccinated") == null ? 0L : (Long) covidJSON.get("partially_vaccinated");
             int partiallyVaccinated = (int) (long) partiallyVaccinatedLong;
             long fullyVaccinatedLong = covidJSON.get("fully_vaccinated") == null ? 0L : (Long) covidJSON.get("fully_vaccinated");
@@ -70,16 +78,17 @@ public class CovidDataReader {
 //            covidDataList.add(new CovidData(zipCode, partialVaccinated, fullyVaccinated, timestamp));
             covidDataList.add(new CovidData(zipCodeStr, timestampStr, partiallyVaccinated, fullyVaccinated));
         }
-        System.out.println("finished");
         return covidDataList;
     }
 
+    
+    
 
-    private List<CovidData> readCovidDataFromCSV(String covidFile) throws IOException, CSVFormatException {
+    private List<CovidData> readCovidDataFromCSV() throws IOException, CSVFormatException {
         List<CovidData> covidDataList = new ArrayList<>();
         Map<String, Integer> headerMap = new HashMap<>();
 
-        try (var reader = new CharacterReader(covidFile)) {
+        try (var reader = new CharacterReader(fileName)) {
             var csvReader = new CSVReader(reader);
             String[] header = csvReader.readRow();
             if (header != null) {
@@ -121,7 +130,7 @@ public class CovidDataReader {
     }
 
 
-
+    
     private boolean isValidZipCode(String zipCode) {
         return zipCode.matches("^\\d{5}$");
     }

@@ -1,5 +1,6 @@
 package edu.upenn.cit594.datamanagement;
 
+import edu.upenn.cit594.logging.Logger;
 import edu.upenn.cit594.util.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,9 +11,11 @@ import java.util.Map;
 
 public class PropertyDataReader {
     private String fileName;
+    private FileData file;
 
-    public PropertyDataReader(String propertyFileName) {
-        this.fileName = propertyFileName;
+    public PropertyDataReader(FileData fileInput) {
+        this.fileName = fileInput.getPropertyFile();
+        this.file = fileInput;
     }
     
     public void printPropertyData() throws IOException, CSVFormatException{
@@ -34,6 +37,15 @@ public class PropertyDataReader {
     public List<PropertyData> readPropertyData() throws IOException, CSVFormatException {
         List<PropertyData> propertyDataList = new ArrayList<>();
         Map<String, Integer> headerMap = new HashMap<>();
+        
+        
+        String logFileName = file.getLogFile();
+        Logger logger = Logger.getInstance();
+        if (logFileName != null) {
+            logger.setOutputDestination(logFileName);
+        }
+        
+        logger.logEvent(fileName);
 
         try (var reader = new CharacterReader(fileName)) {
             var csvReader = new CSVReader(reader);
@@ -57,9 +69,9 @@ public class PropertyDataReader {
             while ((line = csvReader.readRow()) != null) {
                 //String[] parts = line.split(",");
                 if (line.length >= 3) {
-                    String marketValueStr = line[marketValueIdx].trim();
-                    String totalLivableAreaStr = line[totalLivableAreaIdx].trim();
-                    String zipCodeStr = line[zipCodeIdx].trim();
+                    String marketValueStr = line[marketValueIdx];
+                    String totalLivableAreaStr = line[totalLivableAreaIdx];
+                    String zipCodeStr = line[zipCodeIdx];
 
                     if (isValidZipCode(zipCodeStr)) {
                         double marketValue = parseDouble(marketValueStr);

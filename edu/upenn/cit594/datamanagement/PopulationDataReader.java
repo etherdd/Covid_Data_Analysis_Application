@@ -1,25 +1,36 @@
 package edu.upenn.cit594.datamanagement;
 
-import edu.upenn.cit594.util.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import edu.upenn.cit594.logging.Logger;
+import edu.upenn.cit594.util.FileData;
 
 public class PopulationDataReader {
     private String fileName;
+    private FileData file;
 
-    public PopulationDataReader(String populationFileName) {
-        this.fileName = populationFileName;
-    }
+    public PopulationDataReader(FileData fileInput) {
+        this.fileName = fileInput.getPopulationFile();
+        this.file = fileInput;
+    } 
     
-    
-    public List<PopulationData> readPopulationData() throws IOException, CSVFormatException {
-        List<PopulationData> populationDataList = new ArrayList<>();
+    public Map<String, Integer> readPopulationData() throws IOException, CSVFormatException {
+        
+    	Map<String, Integer> populationDataMap = new HashMap<>();
         Map<String, Integer> headerMap = new HashMap<>();
 
+        
+        String logFileName = file.getLogFile();
+        Logger logger = Logger.getInstance();
+        if (logFileName != null) {
+            logger.setOutputDestination(logFileName);
+        }
+        
+        logger.logEvent(fileName);
+        
+        
         try (var reader = new CharacterReader(fileName)) {
             var csvReader = new CSVReader(reader);
             String[] header = csvReader.readRow();
@@ -30,13 +41,12 @@ public class PopulationDataReader {
             }
             
             Integer zipCodeIdx = headerMap.get("zip_code");
-            Integer populationIdx  = headerMap.get("population");
+            Integer populationIdx = headerMap.get("population");
 
             if (zipCodeIdx == null || populationIdx == null) {
                 throw new IllegalArgumentException("CSV file is missing required columns");
             }
 
-            
             String[] line;
             while ((line = csvReader.readRow()) != null) {
                 if (line.length >= 2) {
@@ -45,13 +55,13 @@ public class PopulationDataReader {
 
                     if (isValidZipCode(zipCodeStr) && isValidPopulation(populationStr)) {
                         int population = Integer.parseInt(populationStr);
-                        populationDataList.add(new PopulationData(population, zipCodeStr));
+                        populationDataMap.put(zipCodeStr, population);
                     }
                 }
             }
         }
 
-        return populationDataList;
+        return populationDataMap;
     }
 
     private boolean isValidZipCode(String zipCodeStr) {
@@ -68,5 +78,4 @@ public class PopulationDataReader {
 
         return populationStr.matches("\\d+");
     }
-
 }
