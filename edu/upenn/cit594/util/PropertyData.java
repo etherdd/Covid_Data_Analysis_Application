@@ -17,7 +17,7 @@ public class PropertyData {
         return marketValue;
     }
 
-    public double getotalLivableArea() {
+    public double geTotalLivableArea() {
         return totalLivableArea;
     }
 
