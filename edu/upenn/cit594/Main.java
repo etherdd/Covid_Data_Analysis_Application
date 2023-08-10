@@ -24,6 +24,8 @@ public class Main {
         
     	ActionUserInterface action = new ActionUserInterface (files);
     	action.start();  
+    	
+		return;
 
     }
 

@@ -4,17 +4,14 @@ import edu.upenn.cit594.util.FileData;
 import edu.upenn.cit594.logging.Logger;
 import edu.upenn.cit594.processor.CovidPopulationProcessor;
 
-import java.util.Scanner;
 import java.util.List;
 
 public class CovidPopulationUserInterface {
     private static CovidPopulationUserInterface instance;
-    private Scanner scanner;
     private CovidPopulationProcessor processor;
     private FileData file;
 
     private CovidPopulationUserInterface(FileData inputFiles) {
-        this.scanner = new Scanner(System.in);
         this.processor = CovidPopulationProcessor.getInstance(inputFiles);
         this.file = inputFiles;
     }
@@ -26,9 +23,8 @@ public class CovidPopulationUserInterface {
         return instance;
     }
 
-    public void run() {
-        System.out.println("Type 'partial' or 'full': ");
-        String vaccineType = scanner.nextLine();
+    public void run(String vaccineType, String dateInput) {
+
         
         //log
         String logFileName = file.getLogFile();
@@ -45,9 +41,7 @@ public class CovidPopulationUserInterface {
             System.out.println("Invalid input. Please type 'partial' or 'full'.");
             return;
         }
-
-        System.out.println("Type a date in the format: YYYY-MM-DD");
-        String dateInput = scanner.nextLine();
+        
         
         //log
         logger.logEvent(dateInput);
