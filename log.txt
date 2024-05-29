@@ -1,0 +1,6 @@
+2024-05-29 03:35:45 --covid=./covid_data.json --properties=./properties.csv --population=./population.csv --log=./log.txt
+2024-05-29 03:35:50 4
+2024-05-29 03:35:56 23456
+2024-05-29 03:35:56 ./properties.csv
+2024-05-29 03:36:07 0
+2024-05-29 04:16:29 --covid=./covid_data.json --properties=./properties.csv --population=./population.csv --log=./log.txt
